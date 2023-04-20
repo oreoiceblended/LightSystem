@@ -1,0 +1,27 @@
+import axios from "axios"
+useEffect(() => {
+    const fetchData = async () => {
+      await fetch(`https://io.adafruit.com/api/v2/dungvo20csehcmut/feeds/${feed_name}/data?limit=1`)
+        .then((res) => res.json())
+        .then((res) => setData([res]))
+        .catch((e) => console.error(e));
+    };
+
+    const timer = setTimeout(() => {
+      fetchData();
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+async function getLastData (feed_name) {
+    res = await axios.get(`https://io.adafruit.com/api/v2/dungvo20csehcmut/feeds/${feed_name}/data?limit=1`, { 
+      "X-AIO-Key": "aio_tVzH12HyiwrFPgMN0aZ8xJw5Im4V"}, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+    return 
+} 
+
+export {getLastData};

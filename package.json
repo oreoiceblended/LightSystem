@@ -23,6 +23,7 @@
     "expo-linear-gradient": "~12.0.1",
     "expo-splash-screen": "~0.17.5",
     "expo-status-bar": "~1.4.2",
+    "mqtt": "^4.3.7",
     "precompiled-mqtt": "^4.3.14-beta",
     "react": "18.1.0",
     "react-dom": "18.1.0",

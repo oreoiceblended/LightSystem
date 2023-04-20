@@ -4,11 +4,32 @@ import {
   StyleSheet,
   TouchableOpacity
 } from 'react-native'
-import React, { useLayoutEffect, useState } from "react";
+import React, { useLayoutEffect, useState, useEffect, useRef } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons, Entypo, Ionicons  } from '@expo/vector-icons';
-import {useGlobalContext} from './Context'
+import axios from "axios"
+
+function useInterval(callback, delay) {
+  const savedCallback = useRef();
+
+  // Remember the latest callback.
+  useEffect(() => {
+    savedCallback.current = callback;
+  }, [callback]);
+
+  // Set up the interval.
+  useEffect(() => {
+    function tick() {
+      savedCallback.current();
+    }
+    if (delay !== null) {
+      let id = setInterval(tick, delay);
+      return () => clearInterval(id);
+    }
+  }, [delay]);
+}
+// import { getLastData } from '../utils/index,js';
 const HomeScreen = () => {
   const navigation = useNavigation();
   useLayoutEffect(() => {
@@ -16,16 +37,37 @@ const HomeScreen = () => {
       headerShown: false,
     });
   }, []);
-  // const {
-  //   temperature,
-  // } = useGlobalContext()
+  useInterval(() => {
+    const fetchData = async () => {
+      await fetch(`https://io.adafruit.com/api/v2/dungvo20csehcmut/feeds/cambien1/data?limit=1`)
+        .then((res) => res.json())
+        .then((res) => {
+          console.log(res)
+          setTemperature(res[0]["value"])})
+        .catch((e) => console.error(e));
+    }
+    fetchData()}
+    , 5000)
+  const [temperature, setTemperature] = useState(35)
   const [state, setState] = useState(true);
-  const onPress = () => setState(prevState => !prevState);
-  const newState = state;
+  const onPress = async function () {
+    setState(prevState => !prevState);
+    var on = state ? 1 : 0; 
+    await axios.post('https://io.adafruit.com/api/v2/dungvo20csehcmut/feeds/nutnhan1/data', { 
+      "X-AIO-Key": "aio_tVzH12HyiwrFPgMN0aZ8xJw5Im4V",
+      "value": on }, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    }
+    )
+  }
+  const newState = !state;
   const iconName = newState ? "lightbulb-on-outline" : "lightbulb-outline";
   const iconSize = newState ? 26 : 24;
   const switchColor = newState ? "#47408E": "transparent";
   const gradientColor = newState ? "#5A46FF" : "transparent";
+  const status = newState ? "On" : "Off";
   return (
     <View style={styles.container}>
       <LinearGradient
@@ -57,8 +99,8 @@ const HomeScreen = () => {
             </TouchableOpacity>
           </View>
           <View style={styles.popUpFooter}>
-            <Text style={styles.lightColor}>Color</Text>
-            <Text style={styles.colorPercent}>100%</Text>
+            <Text style={styles.lightColor}>Status</Text>
+            <Text style={styles.colorPercent}>{status}</Text>
           </View>
 		    </View>
       </View>
@@ -78,7 +120,7 @@ const HomeScreen = () => {
             <View style={[styles.envContainer]}>
             <MaterialCommunityIcons name="weather-partly-cloudy" size={30} color="#FFFFFF" />
               <View style={{flexDirection: 'row', alignItems: 'flex-start'}}>
-                <Text style={[styles.envText, {fontSize: 18, lineHeight: 28, fontWeight: 'bold'}]}>50</Text>
+                <Text style={[styles.envText, {fontSize: 18, lineHeight: 28, fontWeight: 'bold'}]}>{temperature}</Text>
                 <Text style={[styles.envText, {fontSize: 11, lineHeight: 18}]}>o</Text>
               </View>
               <Text style={styles.envText}>Temperature</Text>
