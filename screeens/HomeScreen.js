@@ -17,9 +17,8 @@ const HomeScreen = () => {
     });
   }, []);
   // const {
-  //   temperature, client
+  //   temperature,
   // } = useGlobalContext()
-  const a = 50;
   const [state, setState] = useState(true);
   const onPress = () => setState(prevState => !prevState);
   const newState = state;
@@ -79,7 +78,7 @@ const HomeScreen = () => {
             <View style={[styles.envContainer]}>
             <MaterialCommunityIcons name="weather-partly-cloudy" size={30} color="#FFFFFF" />
               <View style={{flexDirection: 'row', alignItems: 'flex-start'}}>
-                <Text style={[styles.envText, {fontSize: 18, lineHeight: 28, fontWeight: 'bold'}]}>{a}</Text>
+                <Text style={[styles.envText, {fontSize: 18, lineHeight: 28, fontWeight: 'bold'}]}>50</Text>
                 <Text style={[styles.envText, {fontSize: 11, lineHeight: 18}]}>o</Text>
               </View>
               <Text style={styles.envText}>Temperature</Text>
