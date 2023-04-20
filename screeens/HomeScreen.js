@@ -8,6 +8,7 @@ import React, { useLayoutEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons, Entypo, Ionicons  } from '@expo/vector-icons';
+import {useGlobalContext} from './Context'
 const HomeScreen = () => {
   const navigation = useNavigation();
   useLayoutEffect(() => {
@@ -15,6 +16,10 @@ const HomeScreen = () => {
       headerShown: false,
     });
   }, []);
+  // const {
+  //   temperature, client
+  // } = useGlobalContext()
+  const a = 50;
   const [state, setState] = useState(true);
   const onPress = () => setState(prevState => !prevState);
   const newState = state;
@@ -74,7 +79,7 @@ const HomeScreen = () => {
             <View style={[styles.envContainer]}>
             <MaterialCommunityIcons name="weather-partly-cloudy" size={30} color="#FFFFFF" />
               <View style={{flexDirection: 'row', alignItems: 'flex-start'}}>
-                <Text style={[styles.envText, {fontSize: 18, lineHeight: 28, fontWeight: 'bold'}]}>10</Text>
+                <Text style={[styles.envText, {fontSize: 18, lineHeight: 28, fontWeight: 'bold'}]}>{a}</Text>
                 <Text style={[styles.envText, {fontSize: 11, lineHeight: 18}]}>o</Text>
               </View>
               <Text style={styles.envText}>Temperature</Text>
