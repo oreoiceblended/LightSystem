@@ -4,9 +4,8 @@ import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from 'expo-linear-gradient';
 import Log from "../components/Log";
 import { Ionicons } from '@expo/vector-icons';
-import { useInterval } from "../utils/datahandle";
-const USERNAME = "dungvo20csehcmut"
-const KEY = 'aio_hpgx65JexxnCdL2s7puNYX12tr6S'
+import { useInterval, USERNAME, KEY } from "../utils/datahandle";
+
 const LogScreen = () => {
     const navigation = useNavigation();
     useLayoutEffect(() => {
@@ -29,7 +28,7 @@ const LogScreen = () => {
         })
         .catch((e) => console.error(e));
     }
-    const onRefresh = () => {
+    function onRefresh() {
         fetchLog();
     }
     return (

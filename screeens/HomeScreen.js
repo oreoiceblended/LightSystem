@@ -4,13 +4,11 @@ import {
     StyleSheet,
     TouchableOpacity
 } from 'react-native'
-import React, { useLayoutEffect, useState, useEffect, useRef } from "react";
+import React, { useLayoutEffect, useState} from "react";
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons, Entypo, Ionicons } from '@expo/vector-icons';
-import { useInterval, postData, fetchData } from "../utils/datahandle";
-const USERNAME = "dungvo20csehcmut"
-const KEY = 'aio_hpgx65JexxnCdL2s7puNYX12tr6S'
+import { useInterval, postData, fetchData, USERNAME, KEY } from "../utils/datahandle";
 
 const HomeScreen = () => {
     const navigation = useNavigation();
@@ -57,11 +55,11 @@ const HomeScreen = () => {
         fetchData(setHumidity, USERNAME, 'cambien3')
         fetchData(setState, USERNAME, 'nutnhan1')
         setUpdateTime(new Date().toLocaleString())
-        setIconName(state ? "lightbulb-on-outline" : "lightbulb-outline")
-        setIconSize(state ? 26 : 24)
-        setSwitchColor(state ? "#47408E" : "transparent")
-        setgradientColor(state ? "#5A46FF" : "transparent")
-        setStatus(state ? "On" : "Off")
+        setIconName(state == 1 ? "lightbulb-on-outline" : "lightbulb-outline")
+        setIconSize(state == 1 ? 26 : 24)
+        setSwitchColor(state == 1 ? "#47408E" : "transparent")
+        setgradientColor(state == 1 ? "#5A46FF" : "transparent")
+        setStatus(state == 1 ? "On" : "Off")
     }
     const [iconName, setIconName] = useState("lightbulb-on-outline");
     const [iconSize, setIconSize] = useState(26);

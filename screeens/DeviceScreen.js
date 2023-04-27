@@ -4,16 +4,12 @@ import {
     View,
     StyleSheet,
     Image,
-    Switch,
-    TextInput,
-    TouchableOpacity } from "react-native";
+    Switch} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from 'expo-linear-gradient';
 import {Slider} from '@miblanchard/react-native-slider';
-import { MaterialCommunityIcons} from '@expo/vector-icons';
-import { useInterval, postData, fetchData } from "../utils/datahandle";
-const USERNAME = "dungvo20csehcmut"
-const KEY = 'aio_hpgx65JexxnCdL2s7puNYX12tr6S'
+import { useInterval, postData, fetchData, USERNAME, KEY } from "../utils/datahandle";
+
 global.manual=1;
 const DeviceScreen = () => {
     const navigation = useNavigation();
@@ -37,12 +33,10 @@ const DeviceScreen = () => {
     }
     , time);
     const [lightThreshold, setlightThreshold] = useState(50)
-    const [hour, sethour] = useState("00");
-    const [min, setmin] = useState("00")
     const [timeMode, setTimeMode] = useState(true);
     const [manualMode, setManualMode] = useState(true);
     const [autoMode, setAutoMode] = useState(false);
-    const [scheduleMode, setScheduleMode] = useState(false);
+    const [alertMode, setAlertMode] = useState(false);
     const [light, setLight] = useState(async ()=>{
         await fetch(`https://io.adafruit.com/api/v2/${USERNAME}/feeds/cambien2/data?limit=1`)
         .then((res) => res.json())
@@ -61,30 +55,33 @@ const DeviceScreen = () => {
     })
     const onManualMode = () => {
         setManualMode(true)
-        setScheduleMode(false)
+        setAlertMode (false)
         setAutoMode(false)
         setTime(3600000)
+        if (global.manual==2) {
+            postData(USERNAME, "nutnhan2", KEY, 0)
+        }
         global.manual=1
     }
     const onAutoMode = () => {
         setManualMode(false)
-        setScheduleMode(false)
+        setAlertMode(false)
         setAutoMode(true)
         setTime(1000)
+        if (global.manual==2) {
+            postData(USERNAME, "nutnhan2", KEY, 0)
+        }
         global.manual=0
     }
     const onScheduleMode = () => {
         setManualMode(false)
-        setScheduleMode(true)
+        setAlertMode(true)
         setTime(3600000)
-        global.manual=0
+        if (global.manual != 2) {
+            postData(USERNAME, "nutnhan2", KEY, 1)
+        }
+        global.manual=2
     }
-    const onPress = () => {
-        const newMode = !timeMode
-        setTimeMode(newMode);
-    }
-    const iconName = timeMode ? "lightbulb-on-outline" : "lightbulb-outline";
-    const iconSize = timeMode ? 40 : 38;
     return (
         <View style={styles.container}>
             <LinearGradient
@@ -124,33 +121,13 @@ const DeviceScreen = () => {
                         />   
                     </View>
                 </View>
-                <View style={styles.scheduledConfig}>
+                <View style={styles.alertConfig}>
                 <LinearGradient
                 colors={['#957DCD', 'transparent']}
                 style={styles.background}/>
                     <View style={styles.popUpHeader}>
-                        <Text style={styles.modeText}>Scheduled</Text>
-                        <Switch value={scheduleMode} onValueChange={onScheduleMode}></Switch> 
-                    </View>
-                    <View style={styles.timeSet}>
-                        <TouchableOpacity style={{marginRight: 20, marginTop: 5}} onPress={onPress}>
-                            <MaterialCommunityIcons name={iconName} size={iconSize} color="white" />
-                        </TouchableOpacity>
-                        <TextInput
-                            style={styles.timeText}
-                            keyboardType={"numeric"}
-                            value={hour}
-                            placeholder={"00"}
-                            onChange={hour => sethour(hour)}
-                        />
-                        <Text style={styles.timeText}>{":"}</Text>
-                        <TextInput
-                            style={styles.timeText}
-                            keyboardType={"numeric"}
-                            value={min}
-                            placeholder={"00"}
-                            onChange={min => setmin(min)}
-                        />
+                        <Text style={styles.modeText}>Alert Mode</Text>
+                        <Switch value={alertMode} onValueChange={onScheduleMode}></Switch> 
                     </View>
                 </View>
             </View>
@@ -245,8 +222,8 @@ const styles = StyleSheet.create({
     lightSlide: {
         backgroundColor: 'rgba(82, 61, 127, 0.5)',
     },
-    scheduledConfig: {
-        flex: 2,
+    alertConfig: {
+        flex: 1,
         backgroundColor: "rgba(82, 61, 127, 0.5)",
         width: "80%",
         alignSelf: "center",

@@ -1,7 +1,8 @@
 
 import {useEffect, useRef } from "react";
 import axios from "axios"
-
+const USERNAME = "dungvo20csehcmut"
+const KEY = 'aio_UrmQ00pbeC7Rg52asD5WWfHMpCsu'
 
 function useInterval(callback, delay) {
     const savedCallback = useRef();
@@ -38,4 +39,4 @@ const postData = async (userName, feedID, key, value) => {
         }
     })
 }
-export {useInterval, fetchData, postData}
+export {useInterval, fetchData, postData, USERNAME, KEY}
