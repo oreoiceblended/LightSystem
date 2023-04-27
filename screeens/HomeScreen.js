@@ -31,6 +31,7 @@ const HomeScreen = () => {
         await fetch(`https://io.adafruit.com/api/v2/${USERNAME}/feeds/nutnhan1/data?limit=1`)
         .then((res) => res.json())
         .then((res) => {
+            postData(USERNAME, "nutnhan2", KEY, 0)
             setState(res[0]["value"])
         })
         .catch((e) => console.error(e));
