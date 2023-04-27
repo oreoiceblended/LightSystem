@@ -8,45 +8,9 @@ import React, { useLayoutEffect, useState, useEffect, useRef } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons, Entypo, Ionicons } from '@expo/vector-icons';
-import axios from "axios"
-
+import { useInterval, postData, fetchData } from "../utils/datahandle";
 const USERNAME = "dungvo20csehcmut"
-const KEY = 'aio_szsp36zYWfmr15jNtXbOiZLk6Ngd'
-function useInterval(callback, delay) {
-    const savedCallback = useRef();
-
-    useEffect(() => {
-        savedCallback.current = callback;
-    }, [callback]);
-
-    useEffect(() => {
-        function tick() {
-            savedCallback.current();
-        }
-        if (delay !== null) {
-            let id = setInterval(tick, delay);
-            return () => clearInterval(id);
-        }
-    }, [delay]);
-}
-const fetchData = async (setFunc, userName, feedID) => {
-    await fetch(`https://io.adafruit.com/api/v2/${userName}/feeds/${feedID}/data?limit=1`)
-        .then((res) => res.json())
-        .then((res) => {
-            setFunc(res[0]["value"])
-        })
-        .catch((e) => console.error(e));
-}
-const postData = async (userName, feedID, key, value) => {
-    await axios.post(`https://io.adafruit.com/api/v2/${userName}/feeds/${feedID}/data`, {
-        "X-AIO-Key": key,
-        "value": value
-    }, {
-        headers: {
-            'Content-Type': 'multipart/form-data'
-        }
-    })
-}
+const KEY = 'aio_hpgx65JexxnCdL2s7puNYX12tr6S'
 
 const HomeScreen = () => {
     const navigation = useNavigation();
@@ -59,23 +23,51 @@ const HomeScreen = () => {
             fetchData(setTemperature, USERNAME, 'cambien1')
             fetchData(setLight, USERNAME, 'cambien2')
             fetchData(setHumidity, USERNAME, 'cambien3')
+            fetchData(setState, USERNAME, 'nutnhan1')
         }
         , 3600000)
     const [temperature, setTemperature] = useState(35)
     const [humidity, setHumidity] = useState(35)
     const [light, setLight] = useState(35)
-    const [state, setState] = useState(true);
+    const [state, setState] = useState(async ()=>{
+        await fetch(`https://io.adafruit.com/api/v2/${USERNAME}/feeds/nutnhan1/data?limit=1`)
+        .then((res) => res.json())
+        .then((res) => {
+            setState(res[0]["value"])
+        })
+        .catch((e) => console.error(e));
+    })
+    const [updateTime, setUpdateTime] = useState(new Date().toLocaleString())
     const onPress = async function () {
-        setState(prevState => !prevState);
-        var on = state ? 1 : 0;
-        postData(USERNAME, "nutnhan1", KEY, on)
+        var m=global.manual;
+        if (m==1) {
+            setState(prevState => !prevState);
+            var on = !state ? 1 : 0;
+            postData(USERNAME, "nutnhan1", KEY, on)
+            setIconName(!state ? "lightbulb-on-outline" : "lightbulb-outline")
+            setIconSize(!state ? 26 : 24)
+            setSwitchColor(!state ? "#47408E" : "transparent")
+            setgradientColor(!state ? "#5A46FF" : "transparent")
+            setStatus(!state ? "On" : "Off")
+        }
     }
-    const newState = !state;
-    const iconName = newState ? "lightbulb-on-outline" : "lightbulb-outline";
-    const iconSize = newState ? 26 : 24;
-    const switchColor = newState ? "#47408E" : "transparent";
-    const gradientColor = newState ? "#5A46FF" : "transparent";
-    const status = newState ? "On" : "Off";
+    const onRefresh = () => {
+        fetchData(setTemperature, USERNAME, 'cambien1')
+        fetchData(setLight, USERNAME, 'cambien2')
+        fetchData(setHumidity, USERNAME, 'cambien3')
+        fetchData(setState, USERNAME, 'nutnhan1')
+        setUpdateTime(new Date().toLocaleString())
+        setIconName(state ? "lightbulb-on-outline" : "lightbulb-outline")
+        setIconSize(state ? 26 : 24)
+        setSwitchColor(state ? "#47408E" : "transparent")
+        setgradientColor(state ? "#5A46FF" : "transparent")
+        setStatus(state ? "On" : "Off")
+    }
+    const [iconName, setIconName] = useState("lightbulb-on-outline");
+    const [iconSize, setIconSize] = useState(26);
+    const [switchColor, setSwitchColor] = useState("#47408E");
+    const [gradientColor, setgradientColor] = useState("#5A46FF");
+    const [status, setStatus] = useState("On");
     return (
         <View style={styles.container}>
             <LinearGradient
@@ -114,7 +106,10 @@ const HomeScreen = () => {
             </View>
             <View style={styles.body}>
                 <View style={styles.infoContainer}>
-                    <Text style={styles.timeText}>Friday, 26 August 2022 | 10:00</Text>
+                    <Text style={styles.timeText}>{updateTime}</Text>
+                    <TouchableOpacity onPress={onRefresh}>
+                        <Ionicons name='refresh' size={20} color='white'></Ionicons>
+                    </TouchableOpacity>
                     <View style={styles.envInfo}>
                         <LinearGradient
                             // Background Linear Gradient

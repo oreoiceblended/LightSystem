@@ -1,8 +1,12 @@
-import React, { useLayoutEffect } from "react";
-import { Text, View, StyleSheet, Image, ScrollView } from "react-native";
+import React, { useLayoutEffect, useState } from "react";
+import { Text, View, StyleSheet, Image, ScrollView, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from 'expo-linear-gradient';
 import Log from "../components/Log";
+import { Ionicons } from '@expo/vector-icons';
+import { useInterval } from "../utils/datahandle";
+const USERNAME = "dungvo20csehcmut"
+const KEY = 'aio_hpgx65JexxnCdL2s7puNYX12tr6S'
 const LogScreen = () => {
     const navigation = useNavigation();
     useLayoutEffect(() => {
@@ -10,6 +14,24 @@ const LogScreen = () => {
             headerShown: false,
         });
     }, []);
+    const [logList, setLogList] = useState([])
+    const [timeLog, setTimeLog] = useState([])
+    const fetchLog = async () => {
+		await fetch(`https://io.adafruit.com/api/v2/${USERNAME}/feeds/nutnhan1/data?limit=20`)
+        .then((res) => res.json())
+        .then((res) => {
+            setLogList(res.map((item) => {
+                return item["value"]
+            }))
+            setTimeLog(res.map((item) => {
+                return item["created_at"]
+            }))
+        })
+        .catch((e) => console.error(e));
+    }
+    const onRefresh = () => {
+        fetchLog();
+    }
     return (
         <View style={styles.container}>
             <LinearGradient
@@ -20,19 +42,17 @@ const LogScreen = () => {
             />
             <View style={styles.header}>
                 <Text style={styles.title}>Activity Log</Text>
-                <Image style={styles.logo} source={require("../assets/download1.png")} />
+                <TouchableOpacity onPress={onRefresh}>
+                        <Ionicons name='refresh' size={20} color='white'></Ionicons>
+                </TouchableOpacity>
             </View>
             <View style={styles.logList}>
                 <ScrollView>
-                    <Log></Log>
-                    <Log></Log>
-                    <Log></Log>
-                    <Log></Log>
-                    <Log></Log>
-                    <Log></Log>
-                    <Log></Log>
-                    <Log></Log>
-                    <Log></Log>
+                    {
+                        logList.map((item, index) => {
+                            return <Log key={index} status={item} time={timeLog[index]}></Log>
+                        })
+                    }
                 </ScrollView>
             </View>
         </View>
@@ -59,7 +79,11 @@ const styles = StyleSheet.create({
         flex: 1,
         marginTop: 20,
         width: "100%",
-        paddingTop: 40,
+        paddingTop: 20,
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        paddingRight: 30
     },
     title: {
         marginTop: 0,

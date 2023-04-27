@@ -2,17 +2,19 @@ import { StyleSheet, Text, View } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react'
 
-export default function Log() {
+export default function Log(props) {
+    const st = props.status == "1" ? "On": "Off"
+    const ti = new Date(props.time).toLocaleString();
   return (
     <View style={styles.item}>
         <LinearGradient
         colors={['#957DCD', 'transparent']}
         style={styles.background} />
         <View style={styles.itemTop}>
-            <Text style={styles.itemStatus}>Status: On</Text>
-            <Text style={styles.itemMode}>Mode: Auto</Text>
+            <Text style={styles.itemStatus}>Status: {st}</Text>
+            {/* <Text style={styles.itemMode}>Mode: Auto</Text> */}
         </View>
-        <Text style={styles.itemBottom}>Adjusted Time: Friday, 26 August 2022 | 10:00</Text>
+        <Text style={styles.itemBottom}>Adjusted Time: {ti}</Text>
     </View>
   )
 }

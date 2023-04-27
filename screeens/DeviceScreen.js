@@ -11,6 +11,10 @@ import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from 'expo-linear-gradient';
 import {Slider} from '@miblanchard/react-native-slider';
 import { MaterialCommunityIcons} from '@expo/vector-icons';
+import { useInterval, postData, fetchData } from "../utils/datahandle";
+const USERNAME = "dungvo20csehcmut"
+const KEY = 'aio_hpgx65JexxnCdL2s7puNYX12tr6S'
+global.manual=1;
 const DeviceScreen = () => {
     const navigation = useNavigation();
     useLayoutEffect(() => {
@@ -18,16 +22,69 @@ const DeviceScreen = () => {
             headerShown: false,
         });
     }, []);
+    const [time, setTime] = useState(360000)
+    useInterval(() => {
+        fetchData(setLight, USERNAME, 'cambien2')
+        if (light < lightThreshold && state == 0) {
+            alert("Nho hon threshold -> Mo den")
+            setState(1);
+            postData(USERNAME, "nutnhan1", KEY, 1)
+        } else if (light >= lightThreshold && state == 1) {
+            alert("Lon hon threshold -> Tat den")
+            setState(0);
+            postData(USERNAME, "nutnhan1", KEY, 0)
+        }
+    }
+    , time);
     const [lightThreshold, setlightThreshold] = useState(50)
     const [hour, sethour] = useState("00");
     const [min, setmin] = useState("00")
-    const [scheduledMode, setScheduledMode] = useState(true);
-    const onPress = () => {
-        const newMode = !scheduledMode
-        setScheduledMode(newMode);
+    const [timeMode, setTimeMode] = useState(true);
+    const [manualMode, setManualMode] = useState(true);
+    const [autoMode, setAutoMode] = useState(false);
+    const [scheduleMode, setScheduleMode] = useState(false);
+    const [light, setLight] = useState(async ()=>{
+        await fetch(`https://io.adafruit.com/api/v2/${USERNAME}/feeds/cambien2/data?limit=1`)
+        .then((res) => res.json())
+        .then((res) => {
+            setLight(res[0]["value"])
+        })
+        .catch((e) => console.error(e));
+    })
+    const [state, setState] = useState(async ()=>{
+        await fetch(`https://io.adafruit.com/api/v2/${USERNAME}/feeds/nutnhan1/data?limit=1`)
+        .then((res) => res.json())
+        .then((res) => {
+            setState(res[0]["value"])
+        })
+        .catch((e) => console.error(e));
+    })
+    const onManualMode = () => {
+        setManualMode(true)
+        setScheduleMode(false)
+        setAutoMode(false)
+        setTime(3600000)
+        global.manual=1
     }
-    const iconName = scheduledMode ? "lightbulb-on-outline" : "lightbulb-outline";
-    const iconSize = scheduledMode ? 40 : 38;
+    const onAutoMode = () => {
+        setManualMode(false)
+        setScheduleMode(false)
+        setAutoMode(true)
+        setTime(1000)
+        global.manual=0
+    }
+    const onScheduleMode = () => {
+        setManualMode(false)
+        setScheduleMode(true)
+        setTime(3600000)
+        global.manual=0
+    }
+    const onPress = () => {
+        const newMode = !timeMode
+        setTimeMode(newMode);
+    }
+    const iconName = timeMode ? "lightbulb-on-outline" : "lightbulb-outline";
+    const iconSize = timeMode ? 40 : 38;
     return (
         <View style={styles.container}>
             <LinearGradient
@@ -46,7 +103,7 @@ const DeviceScreen = () => {
                 colors={['#957DCD', 'transparent']}
                 style={styles.background} />
                     <Text style={styles.modeText}>Manual</Text>
-                    <Switch></Switch>
+                    <Switch value={manualMode} onValueChange={onManualMode}></Switch>
                 </View>
                 <View style={styles.autoConfig}>
                 <LinearGradient
@@ -54,7 +111,7 @@ const DeviceScreen = () => {
                 style={styles.background} />
                     <View style={styles.popUpHeader}>
                         <Text style={styles.modeText}>Auto</Text>
-                        <Switch></Switch> 
+                        <Switch value={autoMode} onValueChange={onAutoMode}></Switch> 
                     </View>
                     <Text style={styles.autoLight}>Light Threshold: {lightThreshold}</Text>
                     <View style={{flex: 1, justifyContent: "center"}}>
@@ -73,7 +130,7 @@ const DeviceScreen = () => {
                 style={styles.background}/>
                     <View style={styles.popUpHeader}>
                         <Text style={styles.modeText}>Scheduled</Text>
-                        <Switch></Switch> 
+                        <Switch value={scheduleMode} onValueChange={onScheduleMode}></Switch> 
                     </View>
                     <View style={styles.timeSet}>
                         <TouchableOpacity style={{marginRight: 20, marginTop: 5}} onPress={onPress}>
