@@ -1,11 +1,6 @@
 import struct
 import numpy as np
-from keras.layers import Conv2D
-from keras.layers import Input
-from keras.layers import BatchNormalization
-from keras.layers import LeakyReLU
-from keras.layers import ZeroPadding2D
-from keras.layers import UpSampling2D
+from keras.layers import Conv2D, Input, BatchNormalization, LeakyReLU, ZeroPadding2D, UpSampling2D
 from keras.layers import concatenate, add
 from keras.models import Model
 
