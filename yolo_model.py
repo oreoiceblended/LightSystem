@@ -179,4 +179,5 @@ def image_detector(camera):
     out_img = cv2.imread("foo.jpg")
     res, frame = cv2.imencode('.jpg', out_img)
     data = base64.b64encode(frame)
-    return str_res, data
+    is_exist_person = "person" in v_labels
+    return str_res, data, is_exist_person

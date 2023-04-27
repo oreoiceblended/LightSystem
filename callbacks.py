@@ -9,6 +9,7 @@ class Callbacks:
     def connected(self, client):
         print("Successful connected to Adafruit IO ...\n")
         for x in self.feed_ids[-2:]:
+            print(x)
             client.subscribe(x)
         
     def subscribe(self, client , userdata , mid , granted_qos):
@@ -27,9 +28,13 @@ class Callbacks:
             else:
                 self.ser_manager.writeData(1)
         elif(feed_id == "nutnhan2"):
-            if payload == "0":
-                self.ser_manager.writeData(2)
-            else:
-                self.ser_manager.writeData(3)
+            # if payload == "1":
+            #     self.ser_manager.writeData(2)
+            # else:
+            #     self.ser_manager.writeData(3)
+            if payload == "1":
+                self.client.burglar_mode = True
+            else: 
+                self.client.burglar_mode = False
                 
     
