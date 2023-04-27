@@ -60,7 +60,7 @@ const HomeScreen = () => {
             fetchData(setLight, USERNAME, 'cambien2')
             fetchData(setHumidity, USERNAME, 'cambien3')
         }
-        , 500)
+        , 3600000)
     const [temperature, setTemperature] = useState(35)
     const [humidity, setHumidity] = useState(35)
     const [light, setLight] = useState(35)
