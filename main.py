@@ -10,7 +10,7 @@ class UserInfo:
         "nutnhan2" : None
     }
     username = "dungvo20csehcmut"
-    key = "aio_LwwM414Htj6kEYiYvHkqBbk7Vs0R"
+    key = "aio_waNf204Da4Qbi8gAPlznSnCm8L4r"
     
 def main():
     username, key, feeds = UserInfo.username, UserInfo.key, UserInfo.feeds
@@ -27,7 +27,7 @@ def main():
             ai_result = image_detector(camera)
             if ai_result[2] and client.burglar_mode:
                 ser.writeData(5)
-                ai_result[0] = "BURGLAR DETECTED !!!!!!!\n"
+                client.publish("buglar", "BURGLAR DETECTED !!")
             client.publish("ai", ai_result[0])
             client.publish("image", ai_result[1])
         time.sleep(1)

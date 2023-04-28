@@ -22,7 +22,7 @@ class SerialManager:
                 splitPort = strPort.split(" ")
                 commPort = (splitPort[0])
         print(commPort)
-        return commPort
+        return "COM5"
 
 
     def processData(self, data):

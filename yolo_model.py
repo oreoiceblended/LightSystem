@@ -170,14 +170,15 @@ def image_detector(camera):
     correct_yolo_boxes(boxes, 416, 416, 416, 416)
     do_nms(boxes, 0.5)
     v_boxes, v_labels, v_scores = get_boxes(boxes, labels, class_threshold)
-    str_res = "Object detected: \n"
+    str_res = ""
+    if len(v_boxes) > 0:
+        str_res = "Object detected: \n"
     for i in range(len(v_boxes)):
         print(v_labels[i], v_scores[i])
         str_res += v_labels[i] + ' / ' + str(round(v_scores[i], 2)) + '\n'
-    str_res += '\n'
     draw_boxes(input_image, v_boxes, v_labels, v_scores)
     out_img = cv2.imread("foo.jpg")
     res, frame = cv2.imencode('.jpg', out_img)
     data = base64.b64encode(frame)
     is_exist_person = "person" in v_labels
-    return str_res, data, is_exist_person
+    return [str_res, data, is_exist_person]
